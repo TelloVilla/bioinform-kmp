@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Col, Container, FormControl, InputGroup, Row, Button } from "react-bootstrap"
+import { Col, Container, FormControl, InputGroup, Row, Button, Toast, ToastContainer } from "react-bootstrap"
 import "../style/global.sass"
 import _ from "lodash";
 
@@ -11,6 +11,7 @@ const IndexPage = () => {
   const [compare, setCompare] = React.useState("");
   const [stepsLPS, setStepsLPS] = React.useState([]);
   const [stepsKMP, setStepsKMP] = React.useState([]);
+  const [show, setShow] = React.useState(false);
   const lpsSteps = [{
       step: 0,
       i: 1,
@@ -25,7 +26,12 @@ const IndexPage = () => {
 
     return(
       <Row key={s.step} className="step">
-        <h6>Step: {s.step}</h6>
+        <h4>Step: {s.step}</h4>
+        <hr></hr>
+        <p>
+          {s.instr}
+        </p>
+        <hr></hr>
         <p>
           i = {s.i}
           <br />
@@ -34,12 +40,34 @@ const IndexPage = () => {
         <p>
           LPS = [{s.lps.map(v => v + ",")}]
         </p>
-        <p>
-          {s.instr}
-        </p>
       </Row>
     )
 
+  }
+  function kmpStepMaker(s){
+    return(
+      <Row key={s.step} className="step">
+        <h4>Step: {s.step}</h4>
+        <h5>String: {s.string}</h5>
+        <h5>Pattern: {s.comp}</h5>
+        <hr></hr>
+        <p>
+          {s.instr}
+        </p>
+        <hr></hr>
+        <p>
+          i = {s.i}
+          <br />
+          j = {s.j}
+        </p>
+        <p>
+          LPS = [{s.lps.map(v => v + ",")}]
+        </p>
+        <p>
+          Patterns found at index: {s.pattern}
+        </p>
+      </Row>
+    )
   }
     
 
@@ -54,50 +82,58 @@ const IndexPage = () => {
     setStepsLPS(lpsSteps);
 
     let newStep = {
+      string: input,
+      comp: compare,
       step: 0,
       i: 0,
       j: 0,
       pattern: [],
-      instr: ""
+      instr: "Starting Values",
+      lps: lps
     }
+
+    kmpSteps[0] = _.clone(newStep);
 
 
     let step = 0;
     let i = 0;
     let j = 0;
     while(i < n){
-      step++;
       if(compare[j] === input[i]){
-        newStep.instr = "String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " match so increase i and j"
+        step++;
+        newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " match so increase i and j"
         j++;
         i++;
         newStep.i++;
         newStep.j++;
         newStep.step++;
-        kmpSteps[step-1] = _.clone(newStep);
+        kmpSteps[step] = _.clone(newStep);
       }
       if(j === m){
-        newStep.instr = "j = length of pattern, pattern found at " + (i-j) + ", set j to lps[j-1]"
+        step++;
+        newStep.instr = "j = length of pattern, pattern found at " + (i-j) + ", set j to lps[j-1] = " + lps[j-1]
         pattern.push((i-j))
         j = lps[j - 1];
         newStep.j = j;
         newStep.pattern = _.clone(pattern);
         newStep.step++;
-        kmpSteps[step-1] = _.clone(newStep);
+        kmpSteps[step] = _.clone(newStep);
 
       }else if( i < n && compare[j] !== input[i]){
         if(j !== 0){
-          newStep.instr = "String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j > 0, set j to lps[j-1]"
+          step++;
+          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j = " + j + " which is > 0, set j to lps[j-1] = " + lps[j-1]
           j = lps[j-1];
           newStep.j = j;
           newStep.step++;
           kmpSteps[step] = _.clone(newStep);
         }else{
-          newStep.instr = "String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j = 0, so increase i"
-          i = i + 1;
+          step++;
+          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j = 0, so increase i"
+          i++;
           newStep.i = i;
           newStep.step++;
-          kmpSteps[step-1] = _.clone(newStep);
+          kmpSteps[step] = _.clone(newStep);
         }
       }
     }
@@ -156,26 +192,41 @@ const IndexPage = () => {
     return lps;
   }
   function handleSubmit(){
+    if(input.length > 30 || compare.length > 30){
+      setShow(true);
+      return;
+    }
     kmpSearch(input, compare);
-    console.log(lpsSteps)
-    console.log(kmpSteps)
+    setStepsKMP(kmpSteps)
   }
   return (
     <Container>
       <Row>
+        <ToastContainer position="middle-center">
+        <Toast bg="warning" onClose={()=>setShow(false)} show={show} delay={5000} autohide>
+          <Toast.Header>
+            <strong className="me-auto">Alert</strong>
+          </Toast.Header>
+          <Toast.Body>
+            String or Pattern may not exceed 30 characters
+          </Toast.Body>
+        </Toast>
+        </ToastContainer>
+        
         <Col className="input" lg="auto">
         <InputGroup size="lg" className="mb-3">
           <InputGroup.Text id="string-input">String Input</InputGroup.Text>
           <FormControl onChange={e => setInput(e.target.value)} aria-label="String Input" aria-describedby="string-input"></FormControl>
           <InputGroup.Text id="string-compare">Pattern</InputGroup.Text>
           <FormControl onChange={e => setCompare(e.target.value)} aria-label="pattern" aria-describedby="pattern"></FormControl>
-          <Button variant="outline-dark" onClick={handleSubmit} id="string-input">Calculate</Button>
+          <Button variant="info" onClick={handleSubmit} id="string-input">Calculate</Button>
         </InputGroup>
         </Col>
       </Row>
       {stepsLPS.length > 0 && <h3>LPS Creation</h3>}
       {stepsLPS.map(lpsStepMaker)}
       {stepsKMP.length > 0 && <h3>KMP Steps</h3>}
+      {stepsKMP.map(kmpStepMaker)}
 
       
     </Container>
