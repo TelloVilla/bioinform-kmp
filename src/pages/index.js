@@ -16,17 +16,23 @@ const IndexPage = () => {
       step: 0,
       i: 1,
       length: 0,
-      lps: [],
+      lps: [0],
       instr: "lps[0] is always 0"
     }];
 
   const kmpSteps = [];
+
+  function resetSteps(){
+    lpsSteps.splice(1, lpsSteps.length-1);
+    kmpSteps.splice(1,kmpSteps.length-1);
+  }
 
   function lpsStepMaker(s){
 
     return(
       <Row key={s.step} className="step">
         <h4>Step: {s.step}</h4>
+        <h5>Pattern: {compare}</h5>
         <hr></hr>
         <p>
           {s.instr}
@@ -64,7 +70,7 @@ const IndexPage = () => {
           LPS = [{s.lps.map(v => v + ",")}]
         </p>
         <p>
-          Patterns found at index: {s.pattern}
+          Patterns found at index: {s.pattern.map(p => p + ", ")}
         </p>
       </Row>
     )
@@ -101,7 +107,7 @@ const IndexPage = () => {
     while(i < n){
       if(compare[j] === input[i]){
         step++;
-        newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " match so increase i and j"
+        newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + ", match so increase i and j"
         j++;
         i++;
         newStep.i++;
@@ -111,7 +117,7 @@ const IndexPage = () => {
       }
       if(j === m){
         step++;
-        newStep.instr = "j = length of pattern, pattern found at " + (i-j) + ", set j to lps[j-1] = " + lps[j-1]
+        newStep.instr = "j = " + j + " = length of pattern, pattern found at " + (i-j) + ", set j to lps[j-1] = " + lps[j-1]
         pattern.push((i-j))
         j = lps[j - 1];
         newStep.j = j;
@@ -122,14 +128,14 @@ const IndexPage = () => {
       }else if( i < n && compare[j] !== input[i]){
         if(j !== 0){
           step++;
-          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j = " + j + " which is > 0, set j to lps[j-1] = " + lps[j-1]
+          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + ", do not match and j = " + j + " which is > 0, set j to lps[j-1] = " + lps[j-1]
           j = lps[j-1];
           newStep.j = j;
           newStep.step++;
           kmpSteps[step] = _.clone(newStep);
         }else{
           step++;
-          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + " do not match and j = 0, so increase i"
+          newStep.instr = "i = " + i + " j = " + j + ", String[i] = " + input[i] + " and Pat[j] = " + compare[j] + ", do not match and j = 0, so increase i"
           i++;
           newStep.i = i;
           newStep.step++;
@@ -137,6 +143,9 @@ const IndexPage = () => {
         }
       }
     }
+    newStep.instr = "Finished as i >= length of string = " + n
+    newStep.step++
+    kmpSteps[step+1] = _.clone(newStep)
     
 
   }
@@ -156,7 +165,7 @@ const IndexPage = () => {
     while(i < compare.length){
       step++;
       if(compare[i] === compare[length]){
-        newStep.instr = "Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + " match so increase length and i and set lps[i] = length"
+        newStep.instr = "i = " + i + " and length = " + length + ", Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + ", match so increase length and i and set lps[i] = length"
         length++;
         lps[i] = length;
         i++;
@@ -168,7 +177,7 @@ const IndexPage = () => {
         
       }else{
         if(length !== 0){
-          newStep.instr = "Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + " do not match and length is > 0, so length = lps[length - 1]"
+          newStep.instr = "i = " + i + " and length = " + length + ", Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + ", do not match and length is > 0, so length = lps[length - 1]"
           length = lps[length - 1];
           newStep.step = lpsSteps.length++;
           newStep.i = i;
@@ -177,7 +186,7 @@ const IndexPage = () => {
           lpsSteps[step] = _.clone(newStep)
 
         }else{
-          newStep.instr = "Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + " do not match and length is = 0, so lps[i] = 0 and increase i"
+          newStep.instr = "i = " + i + " and length = " + length + ", Pat[length] = " + compare[length] + " and Pat[i] = " + compare[i] + ", do not match and length is = 0, so lps[i] = 0 and increase i"
           lps[i] = 0;
           i++;
           newStep.step = lpsSteps.length++;
@@ -189,6 +198,9 @@ const IndexPage = () => {
 
       }
     }
+    newStep.instr = "Finished as i > Pattern length = " + compare.length
+    newStep.step = lpsSteps.length++;
+    lpsSteps[step+1] = _.clone(newStep)
     return lps;
   }
   function handleSubmit(){
@@ -196,6 +208,7 @@ const IndexPage = () => {
       setShow(true);
       return;
     }
+    resetSteps();
     kmpSearch(input, compare);
     setStepsKMP(kmpSteps)
   }
@@ -223,9 +236,9 @@ const IndexPage = () => {
         </InputGroup>
         </Col>
       </Row>
-      {stepsLPS.length > 0 && <h3>LPS Creation</h3>}
+      {stepsLPS.length > 0 && <h3>LPS Creation Steps</h3>}
       {stepsLPS.map(lpsStepMaker)}
-      {stepsKMP.length > 0 && <h3>KMP Steps</h3>}
+      {stepsKMP.length > 0 && <h3>KMP Search Steps</h3>}
       {stepsKMP.map(kmpStepMaker)}
 
       
