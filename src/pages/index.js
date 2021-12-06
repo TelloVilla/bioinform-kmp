@@ -249,7 +249,7 @@ const IndexPage = () => {
           <FormControl onChange={e => setInput(e.target.value)} aria-label="String Input" aria-describedby="string-input"></FormControl>
           <InputGroup.Text id="string-compare">Pattern</InputGroup.Text>
           <FormControl onChange={e => setCompare(e.target.value)} aria-label="pattern" aria-describedby="pattern"></FormControl>
-          <Button variant="info" onClick={handleSubmit} id="string-input">Calculate</Button>
+          <Button variant="info" onClick={handleSubmit} id="string-input">KMP Search</Button>
         </InputGroup>
         </Col>
       </Row>

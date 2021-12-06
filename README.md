@@ -1,54 +1,42 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby minimal starter
-</h1>
+## Setup
 
-## 🚀 Quick start
-
-1.  **Create a Gatsby site.**
-
-    Use the Gatsby CLI to create a new site, specifying the minimal starter.
-
+1. Install NodeJS with NPM (Optional: install Yarn as well)
+   
+2. Git clone the repository
+   ```shell
+   git clone https://github.com/TelloVilla/bioinform-kmp.git
+   ```
+3. NPM or Yarn Install in project directory
+   ```shell
+   npm install
+   #or
+   yarn install
+   ```
+4. NPM or Yarn develop to launch into development mode
+   ```shell
+   npm develop
+   #or
+   yarn develop
+   ```
+5. NPM or Yarn build to create optimized build for deployment
     ```shell
-    # create a new Gatsby site using the minimal starter
-    npm init gatsby
+    npm build
+    #or
+    yarn build
     ```
+## Use
+1. Input desired String and Pattern to search by
+2. Steps to create the LPS array will be outputted
+3. Steps to perform the KMP search will be outputted
 
-2.  **Start developing.**
+## Known Issues
+- Ghost input, Refreshing the page with values inputted will still show the values but they will not be passed to the function
+- Values must be reentered upon a refresh to fix the issue  
 
-    Navigate into your new site’s directory and start it up.
+## Reference
+- based on the Pseudocode from this [article](https://www.baeldung.com/cs/knuth-morris-pratt)
 
-    ```shell
-    cd my-gatsby-site/
-    npm run develop
-    ```
-
-3.  **Open the code and start customizing!**
-
-    Your site is now running at http://localhost:8000!
-
-    Edit `src/pages/index.js` to see your site update in real-time!
-
-4.  **Learn more**
-
-    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Tutorials](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Guides](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-## 🚀 Quick start (Gatsby Cloud)
-
-Deploy this starter with one click on [Gatsby Cloud](https://www.gatsbyjs.com/cloud/):
-
-[<img src="https://www.gatsbyjs.com/deploynow.svg" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/gatsbyjs/gatsby-starter-minimal)
+### Made with
+- [Gatsby](https://www.gatsbyjs.com/)
+- [React-Bootstrap](https://react-bootstrap.github.io/)
+- [Bootstrap](https://getbootstrap.com/)
